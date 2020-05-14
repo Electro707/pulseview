@@ -80,7 +80,8 @@ public:
 
 	void set_signal_and_segment(data::DecodeSignal* signal, uint32_t current_segment);
 	void set_sample_range(uint64_t start_sample, uint64_t end_sample);
-	void set_hide_hidden(bool hide_hidden);
+    void set_hide_hidden(bool hide_hidden);
+    void set_table_color(bool hide_hidden);
 
 	void update_annotations_without_hidden();
 	void update_highlighted_rows(QModelIndex first, QModelIndex last,
@@ -101,6 +102,7 @@ private:
 	int64_t highlight_sample_num_;
 	bool had_highlight_before_;
 	bool hide_hidden_;
+    bool table_color_ann_;
 };
 
 
@@ -146,6 +148,7 @@ private:
 private Q_SLOTS:
 	void on_selected_decoder_changed(int index);
 	void on_hide_hidden_changed(bool checked);
+    void table_color_trace_changed(bool checked);
 	void on_view_mode_changed(int index);
 
 	void on_signal_name_changed(const QString &name);
@@ -173,6 +176,7 @@ private:
 
 	QComboBox* decoder_selector_;
 	QCheckBox* hide_hidden_cb_;
+    QCheckBox* table_color_trace_;
 	QComboBox* view_mode_selector_;
 
 	QToolButton* save_button_;

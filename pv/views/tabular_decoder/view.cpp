@@ -90,6 +90,7 @@ View::View(Session &session, bool is_main_view, QMainWindow *parent) :
 	parent_(parent),
 	decoder_selector_(new QComboBox()),
 	hide_hidden_cb_(new QCheckBox()),
+    table_color_trace_(new QCheckBox()),
 	view_mode_selector_(new QComboBox()),
 	save_button_(new QToolButton()),
 	save_action_(new QAction(this)),
@@ -115,6 +116,7 @@ View::View(Session &session, bool is_main_view, QMainWindow *parent) :
 	toolbar->addWidget(view_mode_selector_);
 	toolbar->addSeparator();
 	toolbar->addWidget(hide_hidden_cb_);
+    toolbar->addWidget(table_color_trace_);
 
 	connect(decoder_selector_, SIGNAL(currentIndexChanged(int)),
 		this, SLOT(on_selected_decoder_changed(int)));
@@ -122,6 +124,8 @@ View::View(Session &session, bool is_main_view, QMainWindow *parent) :
 		this, SLOT(on_view_mode_changed(int)));
 	connect(hide_hidden_cb_, SIGNAL(toggled(bool)),
 		this, SLOT(on_hide_hidden_changed(bool)));
+    connect(table_color_trace_, SIGNAL(toggled(bool)),
+        this, SLOT(table_color_trace_changed(bool)));
 
 	// Configure widgets
 	decoder_selector_->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -131,6 +135,9 @@ View::View(Session &session, bool is_main_view, QMainWindow *parent) :
 
 	hide_hidden_cb_->setText(tr("Hide Hidden Rows/Classes"));
 	hide_hidden_cb_->setChecked(true);
+
+    table_color_trace_->setText(tr("Use Signal Color"));
+    hide_hidden_cb_->setChecked(false);
 
 	// Configure actions
 	save_action_->setText(tr("&Save..."));
@@ -407,6 +414,14 @@ void View::on_hide_hidden_changed(bool checked)
 	table_view_->viewport()->update();
 }
 
+void View::table_color_trace_changed(bool checked)
+{
+    model_->set_table_color(checked);
+
+    // Force repaint, otherwise the new selection isn't shown for some reason
+    table_view_->viewport()->update();
+}
+
 void View::on_view_mode_changed(int index)
 {
 	if (index == ViewModeVisible) {
@@ -454,7 +469,7 @@ void View::on_signal_color_changed(const QColor &color)
 {
 	(void)color;
 
-	table_view_->update();
+    table_view_->update();
 }
 
 void View::on_new_annotations()

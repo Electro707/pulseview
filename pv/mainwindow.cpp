@@ -491,7 +491,7 @@ void MainWindow::setup_ui()
 
 	// Set the window icon
 	QIcon icon;
-	icon.addFile(QString(":/icons/pulseview.png"));
+    icon.addFile(QString(":/icons/pulseview.svg"));
 	setWindowIcon(icon);
 
 	// Set up keyboard shortcuts that affect all views at once

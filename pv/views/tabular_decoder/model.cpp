@@ -49,7 +49,8 @@ AnnotationCollectionModel::AnnotationCollectionModel(QObject* parent) :
 	start_index_(0),
 	end_index_(0),
 	had_highlight_before_(false),
-	hide_hidden_(false)
+    hide_hidden_(false),
+    table_color_ann_(false)
 {
 	// TBD Maybe use empty columns as indentation levels to indicate stacked decoders
 	header_data_.emplace_back(tr("Sample"));     // Column #0
@@ -115,7 +116,7 @@ QVariant AnnotationCollectionModel::data(const QModelIndex& index, int role) con
 					return QApplication::palette().brush(QPalette::Window);
 				else
 					return QApplication::palette().brush(QPalette::WindowText);
-			}
+            }
 		}
 
 		return QApplication::palette().brush(QPalette::WindowText);
@@ -130,13 +131,24 @@ QVariant AnnotationCollectionModel::data(const QModelIndex& index, int role) con
 				((int64_t)ann->start_sample() <= highlight_sample_num_) &&
 				((int64_t)ann->end_sample() >= highlight_sample_num_);
 
-			if (must_highlight)
-				color = ann->color();
-			else
-				color = GlobalSettings::current_theme_is_dark() ?
-					ann->dark_color() : ann->bright_color();
+            if(table_color_ann_){
+                if (must_highlight)
+                    color = ann->color();
+                else
+                    color = GlobalSettings::current_theme_is_dark() ?
+                        ann->dark_color() : ann->bright_color();
+            }
+            else{
+                if (must_highlight){
+                    color = ann->color();
+                }
+                else{
+                    color = QColor('#00000000');
+                }
 
-			return QBrush(color);
+            }
+            return QBrush(color);
+            //return QBrush('#0000FF');
 		}
 	}
 
@@ -338,6 +350,14 @@ void AnnotationCollectionModel::set_hide_hidden(bool hide_hidden)
 		dataChanged(QModelIndex(), QModelIndex());
 
 	layoutChanged();
+}
+
+void AnnotationCollectionModel::set_table_color(bool hide_hidden)
+{
+    table_color_ann_ = hide_hidden;
+
+    //update_annotations_without_hidden();
+    layoutChanged();
 }
 
 void AnnotationCollectionModel::update_annotations_without_hidden()
